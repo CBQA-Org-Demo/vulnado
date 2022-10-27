@@ -14,6 +14,7 @@ pipeline {
         APP_URL = "www.qa.cbc.beescloud.com"
         PIPELINE_CHECK = "https://${APP_URL}/api/external/webhook/pipeline-compliance-check"
         COMPLIANCE_CHECK = "https://${APP_URL}/api/external/webhook/compliance-check"
+        PIPELINE_NAME = ${env.JOB_NAME}
         // SERVICES_REPO_URL = 'git@github.com:CBQA-Org-Demo/vulnado.git'
         // SERVICES_BRANCH = 'master'
         // GIT_CREDENTIAL_NAME = 'github-ssh-key'
@@ -80,41 +81,41 @@ pipeline {
         //     }
         // }
 
-        stage('Docker-Build') {
-            steps {
-                script {
-                    sh '''
-                        docker build -t ${MODULE}  -f $DOCKER_FILE .
-                        ID=$(docker create ${MODULE})
-                        echo ${ID}
-                        docker cp ${ID}:/src/target ./
-                        docker rm ${ID}
-                        pwd
-                        ls target
-                        '''
-                }
-            }
-        }
+        // stage('Docker-Build') {
+        //     steps {
+        //         script {
+        //             sh '''
+        //                 docker build -t ${MODULE}  -f $DOCKER_FILE .
+        //                 ID=$(docker create ${MODULE})
+        //                 echo ${ID}
+        //                 docker cp ${ID}:/src/target ./
+        //                 docker rm ${ID}
+        //                 pwd
+        //                 ls target
+        //                 '''
+        //         }
+        //     }
+        // }
 
 
-        stage('SonarQube') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    withMaven(
-                        options: [junitPublisher(disabled: true, healthScaleFactor: 1.0)],
-                        publisherStrategy: 'EXPLICIT') {
-                            sh 'mvn sonar:sonar'
-                    }
-                }
-            }
-        }
+        // stage('SonarQube') {
+        //     steps {
+        //         withSonarQubeEnv('SonarQube') {
+        //             withMaven(
+        //                 options: [junitPublisher(disabled: true, healthScaleFactor: 1.0)],
+        //                 publisherStrategy: 'EXPLICIT') {
+        //                     sh 'mvn sonar:sonar'
+        //             }
+        //         }
+        //     }
+        // }
 
 
         stage('Pipeline Compliance Check') {
             steps{
                 script {
                 final def (String response, String code) =
-                    sh(script: """curl -X POST -d '{"requestSource": "CBCI", "requestId" : "${REQST_ID}", "requestTimestamp" : "${REQST_TIME_STAMP}", "details" : {"project" : "<<Project Name>>", "release" : "<<Release Name>>", "pipeline" : "<<Pipeline Name>>" } }' -s -w "\\n%{response_code}" ${PIPELINE_CHECK}""", returnStdout: true)                
+                    sh(script: """curl -X POST -d '{"requestSource": "CBCI", "requestId" : "${REQST_ID}", "requestTimestamp" : "${REQST_TIME_STAMP}", "details" : {"project" : "<<Project Name>>", "release" : "<<Release Name>>", "pipeline" : "${PIPELINE_NAME}" } }' -s -w "\\n%{response_code}" ${PIPELINE_CHECK}""", returnStdout: true)                
                         .trim()
                         .tokenize('\n')
 
