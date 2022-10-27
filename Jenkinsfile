@@ -35,12 +35,19 @@ pipeline {
             }
           }
 
+        // stage('Checkout') {
+        //     steps {
+        //         deleteDir()
+        //         git branch: "${env.SERVICES_BRANCH}",
+        //             credentialsId: "${env.GIT_CREDENTIAL_NAME}",
+        //             url: "${env.SERVICES_REPO_URL}"
+        //     }
+        // }
+
         stage('Checkout') {
             steps {
                 deleteDir()
-                git branch: "${env.SERVICES_BRANCH}",
-                    credentialsId: "${env.GIT_CREDENTIAL_NAME}",
-                    url: "${env.SERVICES_REPO_URL}"
+                checkout scm
             }
         }
 
@@ -73,7 +80,6 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        ls -lrt *
                         docker build -t ${MODULE}  -f $DOCKER_FILE .
                         ID=$(docker create ${MODULE})
                         echo ${ID}
