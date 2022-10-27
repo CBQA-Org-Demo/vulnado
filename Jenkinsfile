@@ -8,6 +8,7 @@ pipeline {
     agent { label 'docker-agent' }
 
     environment {
+
         MODULE = 'vulnado'
         DOCKER_FILE = 'Dockerfile.vulnado'
         DOCKERHUB_ACNT = 'prakashsethuraman'
@@ -20,7 +21,6 @@ pipeline {
         // disableConcurrentBuilds()
         skipDefaultCheckout()
         skipStagesAfterUnstable()
-        timestamps()
         ansiColor('xterm')
     }
 
