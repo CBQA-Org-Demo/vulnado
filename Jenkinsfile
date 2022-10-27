@@ -11,9 +11,6 @@ pipeline {
         MODULE = 'vulnado'
         DOCKER_FILE = 'Dockerfile.vulnado'
         DOCKERHUB_ACNT = 'prakashsethuraman'
-        APP_URL = "www.qa.cbc.beescloud.com"
-        PIPELINE_CHECK = "https://${APP_URL}/api/external/webhook/pipeline-compliance-check"
-        COMPLIANCE_CHECK = "https://${APP_URL}/api/external/webhook/compliance-check"
         // SERVICES_REPO_URL = 'git@github.com:CBQA-Org-Demo/vulnado.git'
         // SERVICES_BRANCH = 'master'
         // GIT_CREDENTIAL_NAME = 'github-ssh-key'
@@ -23,6 +20,7 @@ pipeline {
         // disableConcurrentBuilds()
         skipDefaultCheckout()
         skipStagesAfterUnstable()
+        timestamps()
         ansiColor('xterm')
     }
 
@@ -58,7 +56,8 @@ pipeline {
               script {
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "dockerhub_creds", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                   GIT_SHORT_HASH = env.GIT_COMMIT.take(7)
-                  REQST_TIME_STAMP = sh (script: "date -u +'%Y-%m-%dT%H:%M:%SZ'", returnStdout: true).trim()                    
+                  REQST_TIME_STAMP = sh (script: "date -u +'%Y-%m-%dT%H:%M:%SZ'", returnStdout: true).trim()
+                     
                   TARGET_DOCKERHUB = sh (script: "echo ${DOCKERHUB_ACNT}/${MODULE}:${GIT_SHORT_HASH}", returnStdout: true).trim()     
                   sh '''
                   echo "Login into hub.docker.com"
@@ -113,7 +112,7 @@ pipeline {
             steps{
                 script {
                 final def (String response, String code) =
-                    sh(script: """curl -X POST -d '{"requestSource": "CBCI", "requestId" : "1234123412341234", "requestTimestamp" : "${REQST_TIME_STAMP}", "details" : {"project" : "<<Project Name>>", "release" : "<<Release Name>>", "pipeline" : "<<Pipeline Name>>" } }' -s -w "\\n%{response_code}" ${PIPELINE_CHECK}""", returnStdout: true)                
+                    sh(script: """curl -X POST -d '{"requestSource": "CBCI", "requestId" : "1234123412341234", "requestTimestamp" : "${REQST_TIME_STAMP}", "details" : {"project" : "<<Project Name>>", "release" : "<<Release Name>>", "pipeline" : "<<Pipeline Name>>" } }' -s -w "\\n%{response_code}" https://www.qa.cbc.beescloud.com/api/external/webhook/pipeline-compliance-check""", returnStdout: true)                
                         .trim()
                         .tokenize('\n')
 
@@ -135,7 +134,6 @@ pipeline {
                 }
             }
         }    
-
 
         stage('DockerHub-Push') {
             steps {
