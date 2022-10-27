@@ -73,6 +73,7 @@ pipeline {
             steps {
                 script {
                     sh '''
+                        ls -lrt *
                         docker build -t ${MODULE}  -f $DOCKER_FILE .
                         ID=$(docker create ${MODULE})
                         echo ${ID}
