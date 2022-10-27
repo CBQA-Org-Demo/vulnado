@@ -14,7 +14,7 @@ pipeline {
         APP_URL = "www.qa.cbc.beescloud.com"
         PIPELINE_CHECK = "https://${APP_URL}/api/external/webhook/pipeline-compliance-check"
         COMPLIANCE_CHECK = "https://${APP_URL}/api/external/webhook/compliance-check"
-        PIPELINE_NAME = ${env.JOB_NAME}
+        PIPELINE_NAME = env.JOB_NAME
         // SERVICES_REPO_URL = 'git@github.com:CBQA-Org-Demo/vulnado.git'
         // SERVICES_BRANCH = 'master'
         // GIT_CREDENTIAL_NAME = 'github-ssh-key'
