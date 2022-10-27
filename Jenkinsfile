@@ -23,7 +23,6 @@ pipeline {
         // disableConcurrentBuilds()
         skipDefaultCheckout()
         skipStagesAfterUnstable()
-        timestamps()
         ansiColor('xterm')
     }
 
