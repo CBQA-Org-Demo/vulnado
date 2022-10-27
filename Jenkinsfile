@@ -58,7 +58,8 @@ pipeline {
               script {
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "dockerhub_creds", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                 //   GIT_SHORT_HASH = env.GIT_COMMIT.take(7)
-                  REQST_TIME_STAMP = sh (script: "date -u +'%Y-%m-%dT%H:%M:%SZ'", returnStdout: true).trim()                    
+                  REQST_TIME_STAMP = sh (script: "date -u +'%Y-%m-%dT%H:%M:%SZ'", returnStdout: true).trim() 
+                  REQST_ID = sh (script: "date +%s", returnStdout: true).trim()                   
                   TARGET_DOCKERHUB = sh (script: "echo ${DOCKERHUB_ACNT}/${MODULE}:latest", returnStdout: true).trim()     
                   sh '''
                   echo "Login into hub.docker.com"
@@ -113,7 +114,7 @@ pipeline {
             steps{
                 script {
                 final def (String response, String code) =
-                    sh(script: """curl -X POST -d '{"requestSource": "CBCI", "requestId" : "1234123412341234", "requestTimestamp" : "${REQST_TIME_STAMP}", "details" : {"project" : "<<Project Name>>", "release" : "<<Release Name>>", "pipeline" : "<<Pipeline Name>>" } }' -s -w "\\n%{response_code}" ${PIPELINE_CHECK}""", returnStdout: true)                
+                    sh(script: """curl -X POST -d '{"requestSource": "CBCI", "requestId" : "${REQST_ID}", "requestTimestamp" : "${REQST_TIME_STAMP}", "details" : {"project" : "<<Project Name>>", "release" : "<<Release Name>>", "pipeline" : "<<Pipeline Name>>" } }' -s -w "\\n%{response_code}" ${PIPELINE_CHECK}""", returnStdout: true)                
                         .trim()
                         .tokenize('\n')
 
