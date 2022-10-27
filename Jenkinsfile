@@ -11,9 +11,6 @@ pipeline {
         APP_URL = "www.qa.cbc.beescloud.com"
         PIPELINE_CHECK = "https://${APP_URL}/api/external/webhook/pipeline-compliance-check"
         COMPLIANCE_CHECK = "https://${APP_URL}/api/external/webhook/compliance-check"
-        // SERVICES_REPO_URL = 'git@github.com:CBQA-Org-Demo/vulnado.git'
-        // SERVICES_BRANCH = 'master'
-        // GIT_CREDENTIAL_NAME = 'github-ssh-key'
     }
 
     options {
@@ -34,14 +31,6 @@ pipeline {
             }
           }
 
-        // stage('Checkout') {
-        //     steps {
-        //         deleteDir()
-        //         git branch: "${env.SERVICES_BRANCH}",
-        //             credentialsId: "${env.GIT_CREDENTIAL_NAME}",
-        //             url: "${env.SERVICES_REPO_URL}"
-        //     }
-        // }
 
         stage('Checkout') {
             steps {
@@ -67,15 +56,6 @@ pipeline {
             }
           }
 
-        // stage('Build') {
-        //     steps {
-        //         withMaven(
-        //             options: [junitPublisher(disabled: true, healthScaleFactor: 1.0)],
-        //             publisherStrategy: 'EXPLICIT') {
-        //                 sh 'mvn -Dmaven.test.failure.ignore clean package'
-        //         }
-        //     }
-        // }
 
         stage('Docker-Build') {
             steps {
