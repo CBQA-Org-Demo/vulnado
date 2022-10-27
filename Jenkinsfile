@@ -1,9 +1,6 @@
 #!groovy
 
 pipeline {
-    // agent { label 'cbc-aws-g3-agent' }
-    // agent { label 'gce-node' }
-    // agent any
     // agent { label 'maven' }
     agent { label 'docker-agent' }
 
@@ -80,34 +77,34 @@ pipeline {
         //     }
         // }
 
-        // stage('Docker-Build') {
-        //     steps {
-        //         script {
-        //             sh '''
-        //                 docker build -t ${MODULE}  -f $DOCKER_FILE .
-        //                 ID=$(docker create ${MODULE})
-        //                 echo ${ID}
-        //                 docker cp ${ID}:/src/target ./
-        //                 docker rm ${ID}
-        //                 pwd
-        //                 ls target
-        //                 '''
-        //         }
-        //     }
-        // }
+        stage('Docker-Build') {
+            steps {
+                script {
+                    sh '''
+                        docker build -t ${MODULE}  -f $DOCKER_FILE .
+                        ID=$(docker create ${MODULE})
+                        echo ${ID}
+                        docker cp ${ID}:/src/target ./
+                        docker rm ${ID}
+                        pwd
+                        ls target
+                        '''
+                }
+            }
+        }
 
 
-        // stage('SonarQube') {
-        //     steps {
-        //         withSonarQubeEnv('SonarQube') {
-        //             withMaven(
-        //                 options: [junitPublisher(disabled: true, healthScaleFactor: 1.0)],
-        //                 publisherStrategy: 'EXPLICIT') {
-        //                     sh 'mvn sonar:sonar'
-        //             }
-        //         }
-        //     }
-        // }
+        stage('SonarQube') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    withMaven(
+                        options: [junitPublisher(disabled: true, healthScaleFactor: 1.0)],
+                        publisherStrategy: 'EXPLICIT') {
+                            sh 'mvn sonar:sonar'
+                    }
+                }
+            }
+        }
 
 
         stage('Pipeline Compliance Check') {
