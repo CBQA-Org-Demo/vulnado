@@ -80,7 +80,7 @@ pipeline {
                     withMaven(
                         options: [junitPublisher(disabled: true, healthScaleFactor: 1.0)],
                         publisherStrategy: 'EXPLICIT') {
-                            sh 'mvn sonar:sonar'
+                            sh 'mvn sonar:sonar -Dsonar.projectKey=${MODULE}'
                     }
                 }
             }
