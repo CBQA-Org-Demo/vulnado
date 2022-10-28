@@ -123,6 +123,15 @@ pipeline {
                 }
             }
         }
+        
+        stage('Trigger CloudBees CD pipeline') {
+            steps {
+                cloudBeesFlowTriggerRelease configuration: 'CloudBees CD',
+                                            parameters: '{"release":{"releaseName":"CBC Demo Release","pipelineName":"pipeline_CBC Demo Release","parameters":[]}}',
+                                            projectName: 'CBC Demo',
+                                            releaseName: 'CBC Demo Release'
+            }
+        }
 
       
 
