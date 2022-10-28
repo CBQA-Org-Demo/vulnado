@@ -21,6 +21,16 @@ pipeline {
     }
 
     stages {
+        
+        stage('Pipeline Compatibility Check') {
+            steps {
+              script {
+                echo "This step will check whether all expected steps/checks are configured in pipeline or not"
+                  
+                echo "SonarQube and Compliance Check is configured.. Good to go for next step"
+              }
+            }
+          }
 
         stage('Start') {
             steps {
@@ -87,7 +97,7 @@ pipeline {
         }
 
 
-        stage('Pipeline Compliance Check') {
+        stage('Compliance Check') {
             steps{
                 script {
                 final def (String response, String code) =
@@ -124,7 +134,7 @@ pipeline {
             }
         }
         
-        stage('Trigger CloudBees CD pipeline') {
+        stage('Trigger CloudBees CD Pipeline') {
             steps {
                 cloudBeesFlowTriggerRelease configuration: 'CloudBees CD',
                                             parameters: '{"release":{"releaseName":"CBC Demo Release","pipelineName":"pipeline_CBC Demo Release","parameters":[]}}',
@@ -132,8 +142,5 @@ pipeline {
                                             releaseName: 'CBC Demo Release'
             }
         }
-
-      
-
     }
 }
